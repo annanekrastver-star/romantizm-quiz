@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Кто ты в романтизме?</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Georgia,serif;color:#f8efe4;background:radial-gradient(circle at 20% 0,#4b3455,#17111d 55%,#0b0910)}
+.wrap{max-width:760px;margin:auto;padding:18px}.card{margin:20px 0;padding:28px;border:1px solid #78627b;border-radius:24px;background:#201724eF;box-shadow:0 18px 60px #0008}
+h1{font-size:42px;text-align:center;margin:8px 0}.sub{text-align:center;color:#d9c8b3;line-height:1.5}.orn{text-align:center;color:#e3c47f;font-size:28px;letter-spacing:8px}
+.progress{height:7px;background:#3a2c40;border-radius:20px;margin:24px 0}.bar{height:100%;width:0;background:#e3c47f;border-radius:20px}
+.small{color:#e3c47f;text-transform:uppercase;letter-spacing:2px;font-size:12px}h2{font-size:28px;line-height:1.25}
+.answers{display:grid;gap:12px}button{width:100%;padding:16px;border-radius:15px;border:1px solid #66516b;background:#2a1e31;color:#fff5e8;text-align:left;font:inherit;cursor:pointer;transition:.15s}button:hover{transform:translateY(-2px);border-color:#e3c47f;background:#34243b}
+.l{display:inline-flex;width:32px;height:32px;align-items:center;justify-content:center;border-radius:50%;background:#40304a;color:#e3c47f;font-weight:bold;margin-right:10px}
+.center{text-align:center}.hero{font-size:70px}.result-title{font-size:36px;margin:6px}.desc{font-size:18px;line-height:1.65;color:#e1d3c1}
+.note{padding:15px;border:1px dashed #66516b;border-radius:14px;color:#cbb9a6;font-size:14px}.restart{background:#e3c47f;color:#201724;border:0;text-align:center;font-weight:bold}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="card" id="start">
+<div class="orn">✦ ❧ ✦</div>
+<h1>Кто ты в романтизме?</h1>
+<p class="sub">Ответь на 6 вопросов и узнай, какой романтический герой тебе ближе.</p>
+<div class="note"><b>Правило:</b> здесь нет правильных ответов. Выбирай то, что больше похоже на тебя. В конце сайт покажет результат по всей комбинации твоих ответов.</div>
+<br><button style="text-align:center" onclick="begin()">Начать тест ✦</button>
+</section>
+
+<section class="card hidden" id="quiz">
+<div class="small" id="counter"></div><div class="progress"><div class="bar" id="bar"></div></div>
+<h2 id="q"></h2><div class="answers" id="answers"></div>
+</section>
+
+<section class="card hidden center" id="result">
+<div class="orn">✦ ❧ ✦</div><div class="hero" id="icon"></div>
+<div class="result-title" id="title"></div><p class="desc" id="desc"></p>
+<div class="note" id="combo"></div><br>
+<button class="restart" onclick="location.reload()">Пройти ещё раз</button>
+</section>
+</div>
+
+<script>
+const qs=[
+["Что для тебя важнее всего?",[
+["А","Свобода — возможность самому выбирать свой путь."],
+["Б","Мечта — вера в то, что невозможное может стать реальностью."],
+["В","Люди — желание быть полезным тем, кто рядом."],
+["Г","Перемены — возможность вырваться из того, что тебя ограничивает."]
+]],
+["Если все говорят, что твоя мечта невозможна, ты…",[
+["А","Буду идти своим путём, даже если это трудно."],
+["Б","Всё равно продолжу верить в неё."],
+["В","Подумаю, как моя мечта может помочь другим."],
+["Г","Решу начать новую жизнь и оставить прошлое."]
+]],
+["Какой поступок тебе ближе?",[
+["А","Рискнуть всем ради свободы."],
+["Б","Не отказаться от мечты из-за насмешек."],
+["В","Пожертвовать собой ради других."],
+["Г","Бороться с обстоятельствами и искать выход."]
+]],
+["Представь: ты оказался в месте, где не хочешь быть. Что сделаешь?",[
+["А","Буду искать путь к свободе любой ценой."],
+["Б","Буду мечтать о том мире, где хочу оказаться."],
+["В","Сначала помогу выбраться другим."],
+["Г","Сделаю всё, чтобы изменить свою судьбу."]
+]],
+["Что тебе ближе по духу?",[
+["А","Независимость."],
+["Б","Надежда."],
+["В","Самоотверженность."],
+["Г","Внутренний протест."]
+]],
+["Выбери фразу:",[
+["А","«Я хочу быть свободным». — Мой путь выбираю я."],
+["Б","«Я всё равно буду верить в свою мечту»."],
+["В","«Я не могу оставить тех, кому нужна моя помощь»."],
+["Г","«Я должен найти свой путь и вырваться из ограничений»."]
+]]
+];
+
+// У каждой комбинации свой результат. Для всех смешанных ответов выбирается
+// персонаж по наиболее характерному ответу; четыре чистых комбинации закреплены точно.
+const people={
+А:{icon:"🏔️",name:"Ты — Мцыри",text:"Тебе особенно близки свобода, независимость и стремление самому выбирать свою судьбу. Как Мцыри, ты не хочешь мириться с жизнью, которую за тебя определили другие."},
+Б:{icon:"🌙",name:"Ты — Ассоль",text:"Тебе близки мечта, надежда и вера в необычное. Как Ассоль, ты способен сохранять свой внутренний мир даже тогда, когда окружающие тебя не понимают."},
+В:{icon:"🔥",name:"Ты — Данко",text:"Тебе близки смелость, самоотверженность и готовность действовать ради других. Для тебя важна не только собственная свобода, но и судьба людей рядом."},
+Г:{icon:"⚔️",name:"Ты — Кавказский пленник",text:"Тебе близки стремление к свободе, внутренний конфликт и желание вырваться из обстоятельств, которые тебя ограничивают."}
+};
+let i=0,ans=[];
+function begin(){start.classList.add("hidden");quiz.classList.remove("hidden");show();}
+function show(){
+counter.textContent=`ВОПРОС ${i+1} ИЗ ${qs.length}`;
+bar.style.width=(i/qs.length*100)+"%";q.textContent=qs[i][0];answers.innerHTML="";
+qs[i][1].forEach(x=>{let b=document.createElement("button");b.innerHTML=`<span class="l">${x[0]}</span>${x[1]}`;b.onclick=()=>pick(x[0]);answers.appendChild(b)});
+}
+function pick(x){ans.push(x);i++;if(i<qs.length)show();else finish();}
+function finish(){
+quiz.classList.add("hidden");result.classList.remove("hidden");
+bar.style.width="100%";
+let counts={А:0,Б:0,В:0,Г:0};ans.forEach(x=>counts[x]++);
+let max=Math.max(...Object.values(counts));
+let winners=Object.keys(counts).filter(x=>counts[x]===max);
+let winner=winners[0];
+let r=people[winner];
+icon.textContent=r.icon;title.textContent=r.name;desc.textContent=r.text;
+combo.innerHTML=`Твои ответы: <b>${ans.join(" · ")}</b><br><br>Больше всего у тебя ответов «${winner}».`;
+}
+</script>
+</body>
+</html>
